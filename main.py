@@ -3,96 +3,95 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 import time
+from st_aggrid import AgGrid, GridUpdateMode
+from st_aggrid.grid_options_builder import GridOptionsBuilder
 
-st.title('Streamlit テスト')
+st.title('該非判定アプリ テスト')
 
-st.write('Interactive Widgets')
 
-st.write('プログレスバーの表示')
-'Start!'
+with st.sidebar:
+    koban = st.radio(
+    "項番を選択してください。",
+    ('', '１．武器',
+      '２．原子力',
+      '３．化学兵器',
+      '３の２．生物兵器',
+      '４．ミサイル',
+      '５．先端素材',
+      '６．材料加工',
+      '７．エレクトロニクス',
+      '８．電子計算機',
+      '９．通信',
+      '１０．センサー',
+      '１１．航法装置',
+      '１２．海洋関連',
+      '１３．推進装置',
+      '１４．その他',
+      '１５．機微品目'
+      ))
 
-latest_iteration = st.empty()
-bar = st.progress(0)
-
-for i in range(100):
-    latest_iteration.text(f'Iteration{i+1}')
-    bar.progress(i+1)
-    time.sleep(0.1)
-'Done!!!'
-
-left_column, right_column = st.columns(2)
-button = left_column.button('右カラムに文字を表示')
-if button:
-    right_column.write('ここは右カラム')
-
-expander1 = st.expander('問い合わせ1')
-expander1.write('問い合わせ1内容を書く')
-expander2 = st.expander('問い合わせ2')
-expander2.write('問い合わせ2内容を書く')
-expander3 = st.expander('問い合わせ3')
-expander3.write('問い合わせ3内容を書く')
-
-#text = st.sidebar.text_input('あなたの趣味を教えて下さい。')
-#condition = st.sidebar.slider('あなたの今の調子は？', 0,10,5)
-
-text = st.text_input('あなたの趣味を教えて下さい。')
-'あなたの趣味は：', text
-
-condition = st.slider('あなたの今の調子は？', 0,10,5)
-'コンディション：', condition
+if koban == '１．武器':
+    st.write('## 第１項　武器')
+elif koban == '２．原子力':
+    st.write('## 第２項　原子力')
+elif koban == '３．化学兵器':
+    st.write('## 第３項　化学兵器')
+elif koban == '３の２．生物兵器':
+    st.write('## 第３項の２ 生物兵器')
+elif koban == '４．ミサイル':
+    st.write('## 第4項　ミサイル')
+elif koban == '５．先端素材':
+    st.write('## 第5項　先端素材')
+elif koban == '６．材料加工':
+    st.write('## 第6項　材料加工')
+elif koban == '７．エレクトロニクス':
+    st.write('## 第7項　エレクトロニクス')
+elif koban == '８．電子計算機':
+    st.write('## 第8項　電子計算機')
+elif koban == '９．通信':
+    st.write('## 第9項　通信')
+elif koban == '１０．センサー':
+    st.write('## 第10項　センサー')
+elif koban == '１１．航法装置':
+    st.write('## 第11項　航法装置')
+elif koban == '１２．海洋関連':
+    st.write('## 第12項　海洋関連')
+elif koban == '１３．推進装置':
+    st.write('## 第13項　推進装置')
+elif koban == '１４．その他':
+    st.write('## 第14項　その他')
+elif koban == '１５．機微品目':
+    st.write('## 第15項　機微品目')
+else:
+    st.write("You didn\'t select anything.")
 
 option = st.selectbox(
-    'あなたが好きな数字を教えて下さい',
-    list(range(1,11))
+    '利用するマトリクス表を選択してください。',
+    ("2023/04","2023/01")
 )
 
-'あなたの好きな数字は',option,'です。'
+'現在のマトリクス表は',option,'のものです。'
 
-if st.checkbox('Show Image'):
-    st.write('Display Image')
-    img = Image.open('sample.png')
-    st.image(img, caption='Butsuryu-DAO', use_column_width=True)
+'該当する項番を選択してください。'
 
 
+data = {
+    '該当項番': ['第1項(1)','第1項(2)','第1項(3)','第1項(4)'],
+    '項目名': ['銃砲若しくはこれに用いる銃砲弾（発光又は発煙のために用いるものを含む。）若しくはこれらの附属品又はこれらの部分品',
+           '爆発物（銃砲弾を除く。）若しくはこれを投下し、若しくは発射する装置若しくはこれらの附属品又はこれらの部分品',
+           '火薬類（爆発物を除く。）又は軍用燃料',
+           '火薬又は爆薬の安定剤']
+}
 
-df = pd.DataFrame(
-    np.random.rand(100,2)/(50,50)+(35.69,139.70),
-    columns=["lat","lon"]
-)
+df = pd.DataFrame(data)
+gd = GridOptionsBuilder.from_dataframe(df)
+gd.configure_selection(selection_mode='multiple', use_checkbox=True)
+gridoptions = gd.build()
 
-st.map(df)
-st.write(df)
+grid_table = AgGrid(df, height=250, gridOptions=gridoptions,
+                    update_mode=GridUpdateMode.SELECTION_CHANGED)
 
-df = pd.DataFrame(
-    np.random.rand(20,3),
-    columns={"a","b","c"}
-)
-st.write(df)
-st.line_chart(df)
-st.area_chart(df)
-st.bar_chart(df)
-
-"""
-# 章
-## 節
-### 項
-
-```python
-import streamlit as st
-import numpy as np
-import pandas as pd
-```
-"""
-
-st.write('DataFrame')
-
-df = pd.DataFrame({
-    '1列目': [1,2,3,4],
-    '2列目': [10,20,30,40]
-})
-
-st.write(df)
-
-st.dataframe(df.style.highlight_max(axis=0), width=200, height=200)
-
-st.table(df.style.highlight_max(axis=0))
+st.write('## Selected')
+st.write('以下の項番が該当として選ばれました。')
+selected_row = grid_table["selected_rows"]
+st.dataframe(selected_row)
