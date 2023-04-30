@@ -95,3 +95,8 @@ st.write('## Selected')
 st.write('以下の項番が該当として選ばれました。')
 selected_row = grid_table["selected_rows"]
 st.dataframe(selected_row)
+
+if st.button('登録'):
+    st.write(koban, '登録しました。')
+else:
+    st.write('登録されていません')
