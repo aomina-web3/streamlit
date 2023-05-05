@@ -4,7 +4,7 @@ from PIL import Image
 
 
 
-img = Image.open('sample.png')
+img = Image.open('butsuryudao_logo.png')
 st.image(img, caption='Butsuryu-DAO', use_column_width=True)
 
 st.title('物流DAOアプリ　プロトタイプサイト')
