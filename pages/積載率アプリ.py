@@ -11,8 +11,8 @@ import time
 
 # import json
 
-with open('secret.json') as f:
-    secret = json.load(f)
+# with open('secret.json') as f:
+#    secret = json.load(f)
 
 KEY = st.secrets["KEY"]
 ENDPOINT = st.secrets["ENDPOINT"]
