@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 from PIL import Image
 
 
@@ -12,3 +11,5 @@ st.title('プロトタイプサイト')
 
 st.write('物流DAOのプロトタイプアプリを試す事ができるサイトです。')
 st.write('各アプリを確認するには左のサイドバーのメニュー">"からアプリを選択してください。')
+
+st.write("check out this [link](https://www.butsuryu-dao.com)")
