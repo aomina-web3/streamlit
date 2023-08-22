@@ -11,8 +11,9 @@ from pymongo.server_api import ServerApi
 
 username = st.secrets["mongo"]["username"]
 password = st.secrets["mongo"]["password"]
+host1 = st.secrets["mongo"]["host1"]
 
-uri = "mongodb+srv://"+username+":"+password+"@clusterbutsuryudao.whxfjnx.mongodb.net/?retryWrites=true&w=majority"
+uri = "mongodb+srv://"+username+":"+password+"@"+host1+".mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(uri, server_api=ServerApi('1'))
 
 db = client.BD_KPI
