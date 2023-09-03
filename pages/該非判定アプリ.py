@@ -1,10 +1,14 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-from PIL import Image
-import time
-from st_aggrid import AgGrid, GridUpdateMode
-from st_aggrid.grid_options_builder import GridOptionsBuilder
+# from PIL import Image
+# import time
+# from st_aggrid import AgGrid, GridUpdateMode
+# from st_aggrid.grid_options_builder import GridOptionsBuilder
+
+import pymongo
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 st.title('該非判定アプリ プロトタイプ')
 
@@ -63,7 +67,7 @@ elif koban == '１４．その他':
 elif koban == '１５．機微品目':
     st.write('## 第15項　機微品目')
 else:
-    st.write("You didn\'t select anything.")
+    st.write("You didn't select anything.")
 
 option = st.selectbox(
     '利用するマトリクス表を選択してください。',
@@ -75,26 +79,47 @@ option = st.selectbox(
 '該当する項番を選択してください。'
 
 
-data = {
-    '該当項番': ['第1項(1)','第1項(2)','第1項(3)','第1項(4)'],
-    '項目名': ['銃砲若しくはこれに用いる銃砲弾（発光又は発煙のために用いるものを含む。）若しくはこれらの附属品又はこれらの部分品',
-           '爆発物（銃砲弾を除く。）若しくはこれを投下し、若しくは発射する装置若しくはこれらの附属品又はこれらの部分品',
-           '火薬類（爆発物を除く。）又は軍用燃料',
-           '火薬又は爆薬の安定剤']
-}
+username = st.secrets["mongo"]["username"]
+password = st.secrets["mongo"]["password"]
+host1 = st.secrets["mongo"]["host1"]
 
-df = pd.DataFrame(data)
-gd = GridOptionsBuilder.from_dataframe(df)
-gd.configure_selection(selection_mode='multiple', use_checkbox=True)
-gridoptions = gd.build()
+uri = "mongodb+srv://"+username+":"+password+"@"+host1+".mongodb.net/?retryWrites=true&w=majority"
+client = MongoClient(uri, server_api=ServerApi('1'))
 
-grid_table = AgGrid(df, height=250, gridOptions=gridoptions,
-                    update_mode=GridUpdateMode.SELECTION_CHANGED)
+db3 = client.gaihi
+collection = db3.posts
+df = pd.DataFrame.from_records(collection.find())
+# 順番を入れ替えたい列を保持
+target_col = "checkbox1"
+df_target = df[target_col]
+# 入れ替え対称の列を削除
+df = df.drop(target_col, axis=1)
+df = df.drop('_id', axis=1)
+# 任意の場所に対象の列を挿入
+df.insert(0, target_col, df_target)
+
+df_cust = df.sort_index()
 
 st.write('## Selected')
 st.write('以下の項番が該当として選ばれました。')
-selected_row = grid_table["selected_rows"]
-st.dataframe(selected_row)
+
+# edited_df = st.data_editor(df_cust)
+
+# checked_koban = edited_df.loc[edited_df["checkbox1"].idxmax()]
+# st.markdown(f"Your checked list is **{checked_koban}** ")
+
+st.data_editor(
+    df_cust,
+    column_config={
+        "checkbox1": st.column_config.CheckboxColumn(
+            "該当をチェック",
+            help="Select your **favorite** widgets",
+            default=False,
+        )
+    },
+    disabled=["項番1", "項目1", "項番2", "項目2", "用語", "解説"],
+    hide_index=True,
+)
 
 if st.button('登録'):
     st.write(koban, '登録しました。')
