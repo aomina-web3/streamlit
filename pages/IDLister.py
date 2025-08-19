@@ -104,3 +104,5 @@ if uploaded_zip:
         # CSV出力
         csv = df.to_csv(index=False, encoding="utf-8-sig")
         st.download_button("⬇️ 抽出結果CSVをダウンロード", data=csv, file_name="pdf抽出一覧.csv", mime="text/csv")
+
+st.write("アプリに関するフィードバックはこちらへお願いします。[link](https://forms.gle/qegnDhmvZhDbJ5496)")
